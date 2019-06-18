@@ -1,0 +1,7 @@
+Np 100
+Delta_t 0.005
+delta 5
+Delta_p 0.01
+relaxation_steps 100000
+MC_steps 500000
+N 5
