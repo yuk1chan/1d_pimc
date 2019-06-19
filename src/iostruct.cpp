@@ -12,5 +12,7 @@ PIMCParams readPIMCParams(std::ifstream &infile) {
   infile >> in >> param.MC_steps;
   infile >> in >> param.N;
 
+  param.beta = param.Np * param.Delta_t;
+
   return param;
 }

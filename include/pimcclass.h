@@ -36,6 +36,8 @@ public:
 
   int getAccept(void);
   void setAccept(int);
+
+  void outputPath(std::ofstream &outfile);
 };
 
 #endif

@@ -18,6 +18,8 @@ struct PIMCParams {
   double Delta_p; //
 
   int N; //
+
+  double beta;
 };
 
 PIMCParams readPIMCParams(std::ifstream &infile);

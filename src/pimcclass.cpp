@@ -66,8 +66,9 @@ Particle PIMCClass::update_path() {
   tmpE2 += V(p.x);
 
   double Delta_E = tmpE1 - tmpE2;
-  if ((Delta_E < 0) || (exp(-Delta_E * param_.Delta_t) > randu(randgen_))) {
-    // 試行を受け入れる
+  if (std::min(1.0, exp(-Delta_E * param_.Delta_t)) > randu(randgen_)) {
+    // if ((Delta_E < 0) || (exp(-Delta_E * param_.Delta_t) > randu(randgen_)))
+    // { 試行を受け入れる
     path_->set_particle(j, p_trial);
     accept += 1;
   } // else 受け入れない
@@ -144,3 +145,10 @@ void PIMCClass::outputP(std::ofstream &outfile, int const &mcs) {
 
 int PIMCClass::getAccept() { return accept; }
 void PIMCClass::setAccept(int value) { accept = value; }
+
+void PIMCClass::outputPath(std::ofstream &outfile) {
+
+  for (int i = 0; i < param_.Np; i++) {
+    outfile << i << ": " << path_->get_particle(i).x << std::endl;
+  }
+}

@@ -128,5 +128,13 @@ int main(int argc, char const *argv[]) {
     output.close();
   }
 
+  dir = "./path_data/";
+  for (int i = 0; i < params.N; i++) {
+    std::string filename = dir + "data" + std::to_string(i) + ".txt";
+    std::ofstream output(filename);
+    pimc[i]->outputPath(output);
+    output.close();
+  }
+
   return 0;
 }
