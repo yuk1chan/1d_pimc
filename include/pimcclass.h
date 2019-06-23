@@ -7,15 +7,16 @@
 #include <cmath>
 #include <random>
 
-#define P_SIZE 10000
+#define P_SIZE 50000
 
 class PIMCClass {
 
 private:
   // random number generators
   std::mt19937 randgen_;
-  std::uniform_real_distribution<> randu;
-  std::uniform_real_distribution<> rand_delta;
+  std::uniform_real_distribution<> randu;      // [0,1]
+  std::uniform_real_distribution<> rand_delta; // [-delta,delta]
+  std::uniform_real_distribution<> rand_ab;    // [a,b]
   double *P;
 
   int accept;
@@ -36,6 +37,8 @@ public:
 
   int getAccept(void);
   void setAccept(int);
+
+  double getE(int);
 
   void outputPath(std::ofstream &outfile);
 };

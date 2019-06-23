@@ -1,7 +1,11 @@
 Np 100
-Delta_t 0.005
-delta 5
-Delta_p 0.01
+beta 1
+delta 0.3
+Delta_p 0.001
 relaxation_steps 100000
-MC_steps 500000
+MC_steps 100000
+a 0.5
+b 1.5
 N 5
+nshow 1000000
+logfile log.txt

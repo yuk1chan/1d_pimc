@@ -19,7 +19,13 @@ struct PIMCParams {
 
   int N; //
 
-  double beta;
+  double beta; //
+
+  double a, b; // [a,b]
+
+  int nshow;
+
+  std::string logfilename;
 };
 
 PIMCParams readPIMCParams(std::ifstream &infile);

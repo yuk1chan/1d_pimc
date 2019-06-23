@@ -11,7 +11,7 @@
 #include <random>
 #include <vector>
 
-void outputE(std::vector<double> &Ev) {
+void outputE(std::vector<double> &Ev, std::ofstream &logfile) {
 
   double Esum = 0.0;
   double Esum2 = 0.0;
@@ -21,10 +21,10 @@ void outputE(std::vector<double> &Ev) {
     Esum2 += pow(Ev[i], 2);
   }
 
-  std::cout << "エネルギー :" << Esum / Ev.size() << std::endl;
-  std::cout << "エネルギーの分散 :"
-            << Esum2 / Ev.size() - pow(Esum / Ev.size(), 2) << std::endl;
-  std::cout << std::endl;
+  logfile << "result_E: " << Esum / Ev.size() << std::endl;
+  logfile << "result_V[E]: " << Esum2 / Ev.size() - pow(Esum / Ev.size(), 2)
+          << std::endl;
+  logfile << std::endl;
 }
 
 int main(int argc, char const *argv[]) {
@@ -49,7 +49,7 @@ int main(int argc, char const *argv[]) {
   omp_set_num_threads(num_of_threads);
   // std::cout << num_of_threads << std::endl;
 
-  //  PIMCClass p1(params);
+  // PIMCClass p1(params);
   // PIMCClass p2(params);
   std::vector<PIMCClass *> pimc;
 
@@ -57,8 +57,6 @@ int main(int argc, char const *argv[]) {
     PIMCClass *p = new PIMCClass(params);
     pimc.push_back(p);
   }
-
-  int nshow = 10000;
 
 #pragma omp parallel for
   for (int i = 0; i < params.N; i++) {
@@ -68,10 +66,11 @@ int main(int argc, char const *argv[]) {
         pimc[i]->update_path();
       }
 
-      if (imcs % nshow == 0) {
+      if (imcs % params.nshow == 0) {
         std::cout << "Thread number[" << omp_get_thread_num() << "]";
         std::cout << " imcs :" << imcs << std::endl;
-        std::cout << " Accept rate:" << (double)imcs / pimc[i]->getAccept();
+        std::cout << " Accept rate:"
+                  << (double)pimc[i]->getAccept() / (imcs * params.Np);
         std::cout << std::endl;
       }
     }
@@ -93,48 +92,56 @@ int main(int argc, char const *argv[]) {
         pimc[i]->countP(p);
       }
 
-      if (imcs % nshow == 0) {
+      if (imcs % params.nshow == 0) {
         std::cout << "Thread number[" << omp_get_thread_num() << "]";
         std::cout << "imcs :" << imcs << std::endl;
-        std::cout << "Accept rate:" << (double)imcs / pimc[i]->getAccept()
-                  << std::endl;
+        std::cout << "Accept rate:"
+                  << (double)pimc[i]->getAccept() / (imcs * params.Np);
+        std::cout << std::endl;
         E = pimc[i]->calcE(imcs);
+        // E = pimc[i]->getE(imcs);
         pimc[i]->outputE(E);
       }
     }
   }
 
-  std::cout << "---- output ---" << std::endl;
+  std::ofstream logfile(params.logfilename);
 
+  logfile << "params_file: " << argv[1] << std::endl;
+  // logfile << "---- output ---" << std::endl;
   std::vector<double> Ev;
   for (int i = 0; i < params.N; i++) {
     double E;
-    std::cout << "i : " << i << std::endl;
-    std::cout << "Accept rate:"
-              << (double)params.MC_steps / pimc[i]->getAccept() << std::endl;
+    logfile << "i: " << i << std::endl;
+    logfile << "Accept_rate: "
+            << (double)pimc[i]->getAccept() / (params.MC_steps * params.Np);
+    logfile << std::endl;
     E = pimc[i]->calcE(params.MC_steps);
+    // E = pimc[i]->getE(params.MC_steps);
+    logfile << "エネルギー: " << E << std::endl;
     Ev.push_back(E);
-    pimc[i]->outputE(E);
+    // pimc[i]->outputE(E);
   }
 
-  std::cout << "---- result ---" << std::endl;
-  outputE(Ev);
+  // logfile << "\n---- result ---" << std::endl;
+  outputE(Ev, logfile);
+  //
+  // std::string dir = "./data/";
+  // for (int i = 0; i < params.N; i++) {
+  //   std::string filename = dir + "data" + std::to_string(i) + ".txt";
+  //   std::ofstream output(filename);
+  //   pimc[i]->outputP(output, params.MC_steps);
+  //   output.close();
+  // }
 
-  std::string dir = "./data/";
-  for (int i = 0; i < params.N; i++) {
-    std::string filename = dir + "data" + std::to_string(i) + ".txt";
-    std::ofstream output(filename);
-    pimc[i]->outputP(output, params.MC_steps);
-    output.close();
-  }
-
-  dir = "./path_data/";
-  for (int i = 0; i < params.N; i++) {
-    std::string filename = dir + "data" + std::to_string(i) + ".txt";
-    std::ofstream output(filename);
-    pimc[i]->outputPath(output);
-    output.close();
-  }
+  //   dir = "./path_data/";
+  // #pragma omp parallel for
+  //   for (int i = 0; i < params.N; i++) {
+  //     std::string filename = dir + "data" + std::to_string(i) + ".txt";
+  //     std::ofstream output(filename);
+  //     pimc[i]->outputPath(output);
+  //     output.close();
+  //   }
 
   return 0;
 }

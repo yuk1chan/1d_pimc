@@ -6,6 +6,8 @@ typedef struct particle {
 
   double x; // 座標
 
+  // double E; // エネルギー
+
 } Particle;
 
 #endif
