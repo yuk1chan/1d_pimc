@@ -1,5 +1,13 @@
 #!/bin/bash
 
+if [ -e "bin" ];then
+    echo "dir bin found."
+else
+    echo "make dir bin."
+    mkdir bin
+fi
+
+
 if [ -e "params" ]; then
     echo "dir params found."
 else
