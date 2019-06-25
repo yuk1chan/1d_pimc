@@ -24,7 +24,7 @@ fi
 
 echo "make params"
 
-echo "g++ make_param.cpp"
+echo "g++ -std=c++11 make_param.cpp"
 g++ make_param.cpp
 
 ./a.out
