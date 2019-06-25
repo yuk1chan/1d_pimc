@@ -6,7 +6,7 @@ using namespace std;
 int main(int argc, char const *argv[]) {
 
   int Np_min = 10;
-  int Np_max = 100;
+  int Np_max = 50;
 
   double beta_min = 1;
   double beta_max = 1;
@@ -17,7 +17,7 @@ int main(int argc, char const *argv[]) {
   double Delta_p = 0.01;
 
   int relaxation_steps = 100000;
-  int MC_steps = 5000000;
+  int MC_steps = 1000000;
 
   double a_min = -3;
   double a_max = 3;
@@ -25,7 +25,7 @@ int main(int argc, char const *argv[]) {
   double b_min = 0.5;
   double b_max = 1;
 
-  int N = 50;
+  int N = 5;
   int nshow = 100000000;
 
   int index = 0;
@@ -37,7 +37,7 @@ int main(int argc, char const *argv[]) {
 
     for (double beta = beta_min; beta <= beta_max; beta += 0.2) {
 
-      for (double delta = delta_min; delta <= delta_max; delta += 0.1) {
+      for (double delta = delta_min; delta <= delta_max; delta += 0.2) {
 
         for (double a = a_min; a <= a_max; a += 0.5) {
 

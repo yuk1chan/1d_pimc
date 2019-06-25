@@ -35,3 +35,6 @@ rm a.out
 echo "make"
 make
 
+echo "g++ -std=c++11 analyze_param.cpp ./src/iostruct.cpp -o analyze"
+g++ -std=c++11 analyze_param.cpp ./src/iostruct.cpp -o analyze
+
