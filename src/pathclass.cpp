@@ -6,10 +6,10 @@ Path::Path() {}
 Path::Path(int Np) {
   Np_ = Np;
 
-  path_ = new Particle[Np];
+  path_.resize(Np);
 }
 
-Path::~Path() { delete[] path_; }
+Path::~Path() {}
 
 void Path::set_particle(int n, Particle p) { path_[n] = p; }
 

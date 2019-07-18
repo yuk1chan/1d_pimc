@@ -2,12 +2,13 @@
 #define PATHCLASS_H_
 
 #include "./particle.h"
+#include <vector>
 
 class Path {
 
 private:
   int Np_; // num of particle
-  Particle *path_;
+  std::vector<Particle> path_;
 
 public:
   Path();

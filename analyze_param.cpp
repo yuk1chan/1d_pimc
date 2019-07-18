@@ -1,4 +1,5 @@
 #include "./include/iostruct.h"
+#include <algorithm>
 #include <cstdlib>
 #include <dirent.h>
 #include <fstream>

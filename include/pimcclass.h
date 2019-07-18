@@ -6,6 +6,7 @@
 #include "./pathclass.h"
 #include <cmath>
 #include <random>
+#include <vector>
 
 #define P_SIZE 50000
 
@@ -17,9 +18,12 @@ private:
   std::uniform_real_distribution<> randu;      // [0,1]
   std::uniform_real_distribution<> rand_delta; // [-delta,delta]
   std::uniform_real_distribution<> rand_ab;    // [a,b]
-  double *P;
+  std::vector<double> P;
+  std::vector<Particle> init_path;
 
   int accept;
+  double Esum;
+  double E2sum;
 
 public:
   PIMCClass(PIMCParams param);
@@ -28,7 +32,9 @@ public:
   PIMCParams param_; // parameters
   Path *path_;       // path
   // double PIMCdelta;   // pimc delta
-  Particle update_path(); // update path with Metropolis
+  Particle update_local_path();            // update path with Metropolis
+  Particle update_local_path(int const &); // update path with Metropolis
+  void update_global_path();
   void countP(Particle const &p);
   double calcE(int const &imcs);
   void outputE(double const &E);
@@ -38,9 +44,14 @@ public:
   int getAccept(void);
   void setAccept(int);
 
-  double getE(int);
-
   void outputPath(std::ofstream &outfile);
+
+  // double get_local_Action(int);
+  double get_global_Action();
+
+  void initE();
+  double getE(int const &mcs);
+  double getV_E(int const &mcs);
 };
 
 #endif

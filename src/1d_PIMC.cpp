@@ -63,10 +63,11 @@ int main(int argc, char const *argv[]) {
 
     for (int imcs = 1; imcs <= params.relaxation_steps; imcs++) {
       for (int Ni = 0; Ni < params.Np; Ni++) {
-        pimc[i]->update_path();
+        pimc[i]->update_local_path(Ni);
       }
 
       if (imcs % params.nshow == 0) {
+        // pimc[i]->update_global_path();
         std::cout << "Thread number[" << omp_get_thread_num() << "]";
         std::cout << " imcs :" << imcs << std::endl;
         std::cout << " Accept rate:"
@@ -76,9 +77,10 @@ int main(int argc, char const *argv[]) {
     }
   }
 
-  // 平衡化より前のAcceptの初期化
+  // 平衡化より前のAcceptおよびエネルギーの初期化
   for (int i = 0; i < params.N; i++) {
     pimc[i]->setAccept(0);
+    pimc[i]->initE();
   }
 
 #pragma omp parallel for
@@ -88,18 +90,19 @@ int main(int argc, char const *argv[]) {
       Particle p;
       double E;
       for (int Ni = 0; Ni < params.Np; Ni++) {
-        p = pimc[i]->update_path();
+        p = pimc[i]->update_local_path(Ni);
         pimc[i]->countP(p);
       }
 
       if (imcs % params.nshow == 0) {
+        // pimc[i]->update_global_path();
         std::cout << "Thread number[" << omp_get_thread_num() << "]";
         std::cout << "imcs :" << imcs << std::endl;
         std::cout << "Accept rate:"
                   << (double)pimc[i]->getAccept() / (imcs * params.Np);
         std::cout << std::endl;
-        E = pimc[i]->calcE(imcs);
-        // E = pimc[i]->getE(imcs);
+        // E = pimc[i]->calcE(imcs);
+        E = pimc[i]->getE(imcs * params.Np);
         pimc[i]->outputE(E);
       }
     }
@@ -116,8 +119,8 @@ int main(int argc, char const *argv[]) {
     logfile << "Accept_rate: "
             << (double)pimc[i]->getAccept() / (params.MC_steps * params.Np);
     logfile << std::endl;
-    E = pimc[i]->calcE(params.MC_steps);
-    // E = pimc[i]->getE(params.MC_steps);
+    // E = pimc[i]->calcE(params.MC_steps);
+    E = pimc[i]->getE(params.MC_steps * params.Np);
     logfile << "エネルギー: " << E << std::endl;
     Ev.push_back(E);
     // pimc[i]->outputE(E);
@@ -126,22 +129,22 @@ int main(int argc, char const *argv[]) {
   // logfile << "\n---- result ---" << std::endl;
   outputE(Ev, logfile);
   //
-  // std::string dir = "./data/";
-  // for (int i = 0; i < params.N; i++) {
-  //   std::string filename = dir + "data" + std::to_string(i) + ".txt";
-  //   std::ofstream output(filename);
-  //   pimc[i]->outputP(output, params.MC_steps);
-  //   output.close();
-  // }
+  std::string dir = "./data/";
+  for (int i = 0; i < params.N; i++) {
+    std::string filename = dir + "data" + std::to_string(i) + ".txt";
+    std::ofstream output(filename);
+    pimc[i]->outputP(output, params.MC_steps);
+    output.close();
+  }
 
-  //   dir = "./path_data/";
-  // #pragma omp parallel for
-  //   for (int i = 0; i < params.N; i++) {
-  //     std::string filename = dir + "data" + std::to_string(i) + ".txt";
-  //     std::ofstream output(filename);
-  //     pimc[i]->outputPath(output);
-  //     output.close();
-  //   }
+  dir = "./path_data/";
+#pragma omp parallel for
+  for (int i = 0; i < params.N; i++) {
+    std::string filename = dir + "data" + std::to_string(i) + ".txt";
+    std::ofstream output(filename);
+    pimc[i]->outputPath(output);
+    output.close();
+  }
 
   return 0;
 }
