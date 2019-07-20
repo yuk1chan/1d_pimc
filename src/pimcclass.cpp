@@ -22,12 +22,13 @@ PIMCClass::PIMCClass(PIMCParams param)
 
   std::random_device rd;
 
-  randgen_.seed(rd());
-  // randgen_.seed(10000);
+  // randgen_.seed(rd());
+  randgen_.seed(10000);
   // path init
   for (int i = 0; i < param_.Np; i++) {
     Particle p;
-    p.x = rand_ab(randgen_);
+    // p.x = rand_ab(randgen_);
+    p.x = 0.0;
     init_path.push_back(p);
     path_->set_particle(i, p);
   }

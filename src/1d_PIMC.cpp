@@ -49,8 +49,6 @@ int main(int argc, char const *argv[]) {
   omp_set_num_threads(num_of_threads);
   // std::cout << num_of_threads << std::endl;
 
-  // PIMCClass p1(params);
-  // PIMCClass p2(params);
   std::vector<PIMCClass *> pimc;
 
   for (int i = 0; i < params.N; i++) {
@@ -63,6 +61,7 @@ int main(int argc, char const *argv[]) {
 
     for (int imcs = 1; imcs <= params.relaxation_steps; imcs++) {
       for (int Ni = 0; Ni < params.Np; Ni++) {
+        // pimc[i]->update_local_path();
         pimc[i]->update_local_path(Ni);
       }
 
@@ -73,6 +72,8 @@ int main(int argc, char const *argv[]) {
         std::cout << " Accept rate:"
                   << (double)pimc[i]->getAccept() / (imcs * params.Np);
         std::cout << std::endl;
+        std::cout << "path エネルギー: " << pimc[i]->get_global_Action()
+                  << std::endl;
       }
     }
   }
@@ -90,6 +91,7 @@ int main(int argc, char const *argv[]) {
       Particle p;
       double E;
       for (int Ni = 0; Ni < params.Np; Ni++) {
+        // p = pimc[i]->update_local_path();
         p = pimc[i]->update_local_path(Ni);
         pimc[i]->countP(p);
       }
@@ -98,12 +100,24 @@ int main(int argc, char const *argv[]) {
         // pimc[i]->update_global_path();
         std::cout << "Thread number[" << omp_get_thread_num() << "]";
         std::cout << "imcs :" << imcs << std::endl;
-        std::cout << "Accept rate:"
+        std::cout << "Accept rate: "
                   << (double)pimc[i]->getAccept() / (imcs * params.Np);
         std::cout << std::endl;
-        // E = pimc[i]->calcE(imcs);
-        E = pimc[i]->getE(imcs * params.Np);
+        std::cout << "path エネルギー: " << pimc[i]->get_global_Action()
+                  << std::endl;
+        E = pimc[i]->calcE(imcs);
+        std::cout << "エネルギー calc from P(x): " << E << std::endl;
+        E = pimc[i]->getE(imcs * params.Np); // calc from path
         pimc[i]->outputE(E);
+
+        std::string dir = "./path_data/";
+        std::string filename = dir + "data";
+        filename += std::to_string(omp_get_thread_num()) + "MCstep" +
+                    std::to_string(imcs) + ".txt";
+
+        std::ofstream output(filename);
+        pimc[i]->outputPath(output);
+        output.close();
       }
     }
   }
@@ -123,12 +137,11 @@ int main(int argc, char const *argv[]) {
     E = pimc[i]->getE(params.MC_steps * params.Np);
     logfile << "エネルギー: " << E << std::endl;
     Ev.push_back(E);
-    // pimc[i]->outputE(E);
+    logfile << "path エネルギー: " << pimc[i]->get_global_Action() << std::endl;
   }
 
   // logfile << "\n---- result ---" << std::endl;
   outputE(Ev, logfile);
-  //
   std::string dir = "./data/";
   for (int i = 0; i < params.N; i++) {
     std::string filename = dir + "data" + std::to_string(i) + ".txt";
