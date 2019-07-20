@@ -7,14 +7,6 @@ else
     mkdir bin
 fi
 
-
-if [ -e "params" ]; then
-    echo "dir params found."
-else
-    echo "make dir params."
-    mkdir params
-fi
-
 if [ -e "log" ]; then
     echo "dir log found."
 else
@@ -22,19 +14,13 @@ else
     mkdir log
 fi
 
-echo "make params"
-
-echo "g++ -std=c++11 make_param.cpp"
-g++ make_param.cpp
-
-./a.out
-
-echo "rm a.out"
-rm a.out
+if [ -e "path_data" ]; then
+    echo "dir path_data found."
+else
+    echo "make dir path_data."
+    mkdir path_data
+fi
 
 echo "make"
 make
-
-echo "g++ -std=c++11 analyze_param.cpp ./src/iostruct.cpp -o analyze"
-g++ -std=c++11 analyze_param.cpp ./src/iostruct.cpp -o analyze
 
