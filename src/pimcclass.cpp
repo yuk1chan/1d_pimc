@@ -46,7 +46,7 @@ Particle PIMCClass::update_local_path() {
   Particle p_trial, p;
 
   // 1つの原子jを選択
-  j = randgen_() % (param_.Np - 1);
+  j = randgen_() % (param_.Np);
 
   p_trial = p = path_->get_particle(j);
 
