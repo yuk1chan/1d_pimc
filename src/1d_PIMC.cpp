@@ -13,10 +13,20 @@
 
 void outputE(std::vector<double> &Ev, std::ofstream &logfile) {
 
+  double Emin = 9999, Emax = -9999;
   double Esum = 0.0;
   double Esum2 = 0.0;
 
   for (std::vector<double>::size_type i = 0; i < Ev.size(); i++) {
+
+    if( Emin > Ev[i] ){
+      Emin = Ev[i];
+    }
+
+    if( Emax < Ev[i] ){
+      Emax = Ev[i];
+    }
+
     Esum += Ev[i];
     Esum2 += pow(Ev[i], 2);
   }
@@ -24,6 +34,8 @@ void outputE(std::vector<double> &Ev, std::ofstream &logfile) {
   logfile << "result_E: " << Esum / Ev.size() << std::endl;
   logfile << "result_V[E]: " << Esum2 / Ev.size() - pow(Esum / Ev.size(), 2)
           << std::endl;
+  logfile << "Emin: " << Emin << std::endl;
+  logfile << "Emax: " << Emax << std::endl;
   logfile << std::endl;
 }
 
@@ -112,8 +124,8 @@ int main(int argc, char const *argv[]) {
 
         std::string dir = "./path_data/";
         std::string filename = dir + "data";
-        filename += std::to_string(omp_get_thread_num()) + "MCstep" +
-                    std::to_string(imcs) + ".txt";
+        filename +=
+            std::to_string(i) + "MCstep" + std::to_string(imcs) + ".txt";
 
         std::ofstream output(filename);
         pimc[i]->outputPath(output);
