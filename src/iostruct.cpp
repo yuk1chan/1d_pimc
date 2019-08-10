@@ -5,8 +5,8 @@ PIMCParams readPIMCParams(std::ifstream &infile) {
   std::string in;
 
   infile >> in >> param.Np;
-  infile >> in >> param.Delta_t;
-  // infile >> in >> param.beta;
+  // infile >> in >> param.Delta_t;
+  infile >> in >> param.beta;
   infile >> in >> param.delta;
   infile >> in >> param.Delta_p;
   infile >> in >> param.relaxation_steps;
@@ -17,8 +17,8 @@ PIMCParams readPIMCParams(std::ifstream &infile) {
   infile >> in >> param.nshow;
   infile >> in >> param.logfilename;
 
-  // param.Delta_t = param.beta / param.Np;
-  param.beta = param.Delta_t * param.Np;
+  param.Delta_t = param.beta / param.Np;
+  // param.beta = param.Delta_t * param.Np;
 
   return param;
 }

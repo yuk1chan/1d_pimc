@@ -1,11 +1,11 @@
-Np	100
-Delta_t  0.01
-delta 0.2
+Np	10
+beta  1.0
+delta 0.3
 Delta_p 0.001
-relaxation_steps  1000000
+relaxation_steps  500000
 MC_steps  1000000
 a -1
 b 1
-N 1
-nshow 1000
+N 4
+nshow 10000
 logfile	log.txt

@@ -11,7 +11,7 @@
 #include <random>
 #include <vector>
 
-void outputE(std::vector<double> &Ev, std::ofstream &logfile) {
+void outputE(std::vector<double> &Ev,PIMCParams params,std::ofstream &logfile) {
 
   double Emin = 9999, Emax = -9999;
   double Esum = 0.0;
@@ -31,11 +31,19 @@ void outputE(std::vector<double> &Ev, std::ofstream &logfile) {
     Esum2 += pow(Ev[i], 2);
   }
 
-  logfile << "result_E: " << Esum / Ev.size() << std::endl;
-  logfile << "result_V[E]: " << Esum2 / Ev.size() - pow(Esum / Ev.size(), 2)
-          << std::endl;
+  double E = Esum / Ev.size();
+  double EV = Esum2 / Ev.size() - pow(Esum / Ev.size(), 2);
+  double ESD = sqrt(EV);
+  logfile << "result_E: " << E << std::endl;
+  logfile << "result_V[E]: " << EV << std::endl;
   logfile << "Emin: " << Emin << std::endl;
   logfile << "Emax: " << Emax << std::endl;
+
+  logfile << "temp\tE\tEmin\tEmax\tESD" << std::endl;
+  logfile << 1.0/params.beta << "\t" << Esum / Ev.size() << "\t"
+          << Emin << "\t" << Emax << "\t" << ESD << std::endl;
+
+
   logfile << std::endl;
 }
 
@@ -153,7 +161,7 @@ int main(int argc, char const *argv[]) {
   }
 
   // logfile << "\n---- result ---" << std::endl;
-  outputE(Ev, logfile);
+  outputE(Ev, params, logfile);
   std::string dir = "./data/";
   for (int i = 0; i < params.N; i++) {
     std::string filename = dir + "data" + std::to_string(i) + ".txt";
